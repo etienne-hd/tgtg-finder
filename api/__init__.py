@@ -1,2 +1,2 @@
 from .client import Client
-from .tgtg import TGTG
+from .models.enums import SortOption, ItemCategory, DietCategory

@@ -1,4 +1,4 @@
-class Cookie:
+class Auth:
     def __init__(self, access_token: str, access_token_expiration: str, refresh_token: str):
         self.access_token = access_token
         self.access_token_expiration = access_token_expiration

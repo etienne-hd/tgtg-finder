@@ -1,8 +1,12 @@
 # TooGoodToGo Finder
-Receive a notification when a new basket becomes available on **Too Good To Go**!
+Receive a notification when a new basket becomes available on **TooGoodToGo**!
 
 # Information
 This project is currently under development.
+
+# Features
+* Datadome Cookie Generation Bypass
+* Session Management via Realistic TLS Fingerprint
 
 # Disclaimer
 This project is an unofficial tool created for **educational and experimental purposes only**.
