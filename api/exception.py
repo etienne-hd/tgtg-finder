@@ -10,5 +10,14 @@ class DatadomeError(RuntimeError):
 class NotAuthenticated(RuntimeError):
     """Raised when a method requiring authentication is called without being logged in."""
 
-class TokenRefreshError(RuntimeError):
-    """Raised when the JWT token cannot be refreshed."""
+class RequestError(RuntimeError):
+    """Raised when a request gets a 4xx status code response."""
+
+class RequestUnauthorized(RequestError):
+    """Raised on a 401 status code response."""
+
+class RequestForbidden(RequestError):
+    """Raised specifically on a 403 status code response."""
+
+class RequestTooMany(RequestError):
+    """Raised on a 429 Too Many Requests response."""

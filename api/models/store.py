@@ -3,7 +3,6 @@ class Store:
         self.raw = raw
         self.id: str = raw["store_id"]
         self.name: str = raw["store_name"]
-        self.branch: str = raw["branch"]
         self.description: str = raw["description"]
         self.tax_identifier: str = raw["tax_identifier"]
         self.website: str = raw["tax_identifier"]

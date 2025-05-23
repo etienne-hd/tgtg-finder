@@ -13,10 +13,10 @@ formatter = logging.Formatter('[%(asctime)s] [%(levelname)s] %(message)s', datef
 stream_handler = logging.StreamHandler()
 stream_handler.setFormatter(formatter)
 logger.addHandler(stream_handler)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 # Log File
 file_handler = logging.FileHandler(file_path, mode='w', encoding='utf-8')
-file_handler.setLevel(logging.ERROR)
+file_handler.setLevel(logging.INFO)
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)

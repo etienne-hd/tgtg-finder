@@ -1,7 +1,6 @@
-from typing import Final
-
-COUNTRY_CODE: Final[str] = "FR"
-BASE_URL: Final[str] = "https://apptoogoodtogo.com/api"
-DEVICE_TYPE: Final[str] = "IOS"
-POLLING_TIMEOUT: Final[float] = 120.0
-POLLING_SLEEP_TIME: Final[float] = 5.0
+IOS_VERSION = "18.5"
+IPHONE_MODEL = "15"
+COUNTRY_CODE = "FR"
+BASE_URL = "https://apptoogoodtogo.com/api"
+POLLING_TIMEOUT = 120  # seconds to wait for email confirmation
+POLLING_SLEEP_TIME = 5  # delay between each polling attempt
