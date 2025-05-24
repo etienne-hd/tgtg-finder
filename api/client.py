@@ -197,7 +197,8 @@ class Client:
             refresh_token=body["refresh_token"]
         )
         logger.info("Successfully refreshed access token.")
-        self._save_cookie(email=self._email, cookie=auth)
+        if self.save_cookie:
+            self._save_cookie(email=self._email, cookie=auth)
         return auth
         
     def _check_auth(self, auth: Auth) -> bool:
