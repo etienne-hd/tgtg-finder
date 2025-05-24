@@ -12,7 +12,7 @@ def main():
     client = Client()
 
     client.login(email=email)
-    if not client.is_connected():
+    if not client.is_connected:
         logger.warning("Client login failed: not connected.")
         return
     

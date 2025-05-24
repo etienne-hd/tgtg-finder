@@ -1,6 +1,6 @@
 # For this app
-/logs
-/cookie
+logs
+cookie
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

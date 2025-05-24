@@ -1,6 +1,7 @@
 from .logger import logger
 from .models.auth import Auth
 from .models.bag import Bag
+from .models.user import User
 from .models.enums import SortOption, ItemCategory, DietCategory
 import config
 from . import exception
@@ -16,7 +17,8 @@ class Client:
     def __init__(self, save_cookie=True, use_cookie=True):
         self.save_cookie = save_cookie
         self.use_cookie = use_cookie
-        self.session = self._init_session()
+        
+        self._session = self._init_session()
         self._auth: Auth = None
         self._email = None
 
@@ -35,7 +37,7 @@ class Client:
         }
 
         return session
-    
+
     def get_app_version(self) -> str:
         response = tls_client.Session("firefox_120").get("https://itunes.apple.com/lookup?bundleId=com.moonsted.TGTG")
         if response.status_code == 200 and response.json()["resultCount"]:
@@ -45,9 +47,9 @@ class Client:
         logger.warning(f"TooGoodToGo version fetch failed ({response.status_code}): {response.text}")
         return "25.5.0"
 
-    def fetch(self, path: str, payload: dict) -> dict:
+    def fetch(self, path: str, payload: dict = None) -> dict:
         logger.debug(f"Sending POST request to '{path}' with payload: {payload}")
-        response = self.session.post(f"{config.BASE_URL}{path}", json=payload)
+        response = self._session.post(f"{config.BASE_URL}{path}", json=payload)
         logger.debug(f"Response received from '{path}': status code = {response.status_code}, response body = {response.text}")
 
         if response.status_code >= 200 and response.status_code < 300:
@@ -64,6 +66,15 @@ class Client:
         else:
             raise exception.RequestError(f"An error {response.status_code} has occurred. ({response.text})")
 
+    @property
+    def session(self) -> tls_client.Session:
+        return self._session
+
+    @property
+    def auth(self) -> Auth:
+        return self._auth
+
+    @property
     def is_connected(self) -> bool:
         return self._check_auth(self._auth) if self._auth else False
 
@@ -77,12 +88,18 @@ class Client:
             if time.time() > self._auth.access_token_expiration:
                 self._auth = self._refresh_auth(self._auth)
 
-            self.session.headers["authorization"] = f"Bearer {self._auth.access_token}"
+            self._session.headers["authorization"] = f"Bearer {self._auth.access_token}"
             result = function(*args, **kwargs)
-            del self.session.headers["authorization"] # Remove auth header to avoid sending it with non-authenticated requests
+            del self._session.headers["authorization"] # Remove auth header to avoid sending it with non-authenticated requests
             return result
         return wrapper
     
+    @property
+    @require_login
+    def user(self) -> User:
+        body = self.fetch("/user/v2/")
+        return User(body)
+
     @require_login
     def browse(
         self, search_phrase: str = "", radius: int = 22, 
@@ -179,7 +196,7 @@ class Client:
         }
 
         self.fetch(f"/tracking/v1/anonymousEvents", payload=payload)
-        if any(cookie.name == "datadome" for cookie in self.session.cookies):
+        if any(cookie.name == "datadome" for cookie in self._session.cookies):
             logger.info("Successfully generated Datadome cookie.")
             return
         
@@ -202,7 +219,7 @@ class Client:
         return auth
         
     def _check_auth(self, auth: Auth) -> bool:
-        self.session.headers["authorization"] = f"Bearer {auth.access_token}"
+        self._session.headers["authorization"] = f"Bearer {auth.access_token}"
         try:
             self.fetch("/app/v1/onStartup", payload={})
             return True
@@ -211,7 +228,7 @@ class Client:
         except Exception as e:
             raise e
         finally:
-            del self.session.headers["authorization"]
+            del self._session.headers["authorization"]
 
     def _auth_by_request_polling_id(self, email: str, polling_id: str) -> Optional[Auth]:
         payload = {
