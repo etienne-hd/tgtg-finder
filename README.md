@@ -79,7 +79,7 @@ You can adjust values like `IOS_VERSION` or `POLLING_TIMEOUT` as needed.
       client = Client()
   
       client.login(email=email)
-      if not client.is_connected():
+      if not client.is_connected:
           logger.warning("Client login failed: not connected.")
           return
       
