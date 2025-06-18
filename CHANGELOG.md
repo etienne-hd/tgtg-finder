@@ -1,3 +1,7 @@
+## v1.0.2
+### Changed
+* Replaced `tls_client` with `curl_cffi`, a more robust HTTP client.
+
 ## v1.0.1
 ### Added
 * Made user account info accessible via a property.

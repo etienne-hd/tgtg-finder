@@ -1,2 +1,1 @@
-tls-client==1.0.1
-typing_extensions==4.12.2
+curl_cffi==0.11.3

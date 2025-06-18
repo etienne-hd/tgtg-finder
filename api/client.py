@@ -10,7 +10,7 @@ import time
 from typing import Optional, Callable, List
 import uuid
 import os
-import tls_client
+import curl_cffi
 import json
 
 class Client:
@@ -22,8 +22,8 @@ class Client:
         self._auth: Auth = None
         self._email = None
 
-    def _init_session(self) -> tls_client.Session:
-        session = tls_client.Session('safari_ios_16_0', random_tls_extension_order=True)
+    def _init_session(self) -> curl_cffi.Session:
+        session = curl_cffi.Session(impersonate='safari')
 
         app_version = self.get_app_version()
 
@@ -39,7 +39,7 @@ class Client:
         return session
 
     def get_app_version(self) -> str:
-        response = tls_client.Session("firefox_120").get("https://itunes.apple.com/lookup?bundleId=com.moonsted.TGTG")
+        response = curl_cffi.Session(impersonate="firefox").get("https://itunes.apple.com/lookup?bundleId=com.moonsted.TGTG")
         if response.status_code == 200 and response.json()["resultCount"]:
             body = response.json()
             return body["results"][0]["version"]
@@ -67,7 +67,7 @@ class Client:
             raise exception.RequestError(f"An error {response.status_code} has occurred. ({response.text})")
 
     @property
-    def session(self) -> tls_client.Session:
+    def session(self) -> curl_cffi.Session:
         return self._session
 
     @property
@@ -196,7 +196,8 @@ class Client:
         }
 
         self.fetch(f"/tracking/v1/anonymousEvents", payload=payload)
-        if any(cookie.name == "datadome" for cookie in self._session.cookies):
+
+        if self._session.cookies.get("datadome"):
             logger.info("Successfully generated Datadome cookie.")
             return
         
